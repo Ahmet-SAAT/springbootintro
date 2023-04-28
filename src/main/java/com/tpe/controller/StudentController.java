@@ -2,8 +2,13 @@ package com.tpe.controller;
 
 
 import com.tpe.domain.Student;
+import com.tpe.dto.StudentDTO;
 import com.tpe.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,7 +62,7 @@ public class StudentController {
 
     //get a student by Id via PathParam
 
-    @GetMapping("{id}}")////http://localhost:8080/students/id
+    @GetMapping("/{id}}")//http://localhost:8080/students/id
     public ResponseEntity<Student> getStudentWithPath(@PathVariable("id") Long id){
         Student student=studentService.findStudent(id);
         return ResponseEntity.ok(student);
@@ -68,12 +73,66 @@ public class StudentController {
             public ResponseEntity<Map<String,String>> deleteStudent(@PathVariable("id") Long id){
         studentService.deleteStudent(id);
       Map<String,String> map=new HashMap<>();
-       map.put("message","Student is created successfuly");
+       map.put("message","Student is deleted successfuly");
        map.put("status","true");
        return new ResponseEntity<>(map, HttpStatus.OK);//201
 
    }
 
+   //clientten service kadar kisim DTO DBden Service kadar pojo denir
+    //DTO(data transfer object) pojo servise kadar gelir orada dto ya donusur.
+    //bu islem bize hiz ve guvenlik kazandirir.
+    //clientten service gelen ve serviceden cliente gelen dto olmali
+    //service gelen dt serviceden dbye giderken pojo olur.dbdeb servicede pojo gider.
+    //clientten dbye giderken servisede pojoya donmezse exception verir.
+    //dbden cliente giderken serviste dto ya donmezse exception olmaz ama hiz ve guvenlik sorunu olur.
+
+   //update student  endpoint+id+json(requestbody)+http metodu
+    @PutMapping("/{id}")//http://localhost:8080/students/id
+     public ResponseEntity<Map<String,String>> updateStudent(
+             @PathVariable("id") Long id,//tek sorgu varsa parantez icine yazmayabiliriz.
+                                                             @RequestBody StudentDTO studentDTO ){
+            studentService.updateStudent(id,studentDTO);
+        Map<String,String> map=new HashMap<>();
+        map.put("message","Student is updated successfuly");
+        map.put("status","true");
+        return new ResponseEntity<>(map, HttpStatus.OK);
+
+    }
+
+    //pageable
+    @GetMapping("/page")//http://localhost:8080/students/page?page=1&size=2&sort=name&direction=ASC
+    public ResponseEntity<Page<Student>> getAllWithPage(
+            @RequestParam ("page") int page,//kacinci sayfa gelsin
+            @RequestParam("size") int size,//sayfa basi kac urun girsin
+            @RequestParam("sort") String prop,//hangi fielde gore siralanacak
+            @RequestParam("direction")Sort.Direction direction//siralama turu
+            ){
+        Pageable pageable= PageRequest.of(page,size,Sort.by(direction,prop));
+        Page<Student> studentPage=studentService.getAllWithPage(pageable);
+        return ResponseEntity.ok(studentPage);
+    }
+
+    //getbylastname
+    @GetMapping("/querylastname")
+    public ResponseEntity<List<Student>> getStudentByLastName(@RequestParam("lastName") String lastName){
+        List<Student> list=studentService.findStudent(lastName);
+        return ResponseEntity.ok(list);
+    }
+
+    //getAllStudentByGrade(JPQL)->java persistence query languange
+    @GetMapping("/grade/{grade}")//http://localhost:8080/students/grade/85  +get
+    public ResponseEntity<List<Student>> getStudentsEqualsGrade(@PathVariable("grade") Integer grade){
+        List<Student> list=studentService.findAllEqualsGrade(grade);
+        return ResponseEntity.ok(list);
+    }
+
+    //DB den direkt DTO olarak datami almak istersem ne yaparim.Yani donusum repoda olsun
+    @GetMapping("/query/dto")//http://localhost:8080/students/query/dto?id=1 +get
+    public ResponseEntity<StudentDTO> getStudentDTO(@RequestParam("id") Long id){
+       StudentDTO studentDTO= studentService.findStudentDTOById(id);
+       return  ResponseEntity.ok(studentDTO);
+    }
 
 
 }
