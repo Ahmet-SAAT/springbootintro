@@ -13,3 +13,5 @@ public class SpringbootintroApplication {
 //tomcat server gomulu oldugu icin baska birseye gerek yok
 	//annotationlar arkada corejava islemi yapip jvmye gonderir.
 }
+//run editconfiguationsda  more show ad vm option secilir istenilen proporties secilir.
+//program calisirken belirttigimz ile baslar sonra onda olmayanlari diger propertiesden alir.

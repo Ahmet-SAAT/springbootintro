@@ -34,8 +34,10 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     //JPQL mucizesi POLO=DTO donusumu//jpql servicede degil repoda kullanilabilir
     //StudentDTO icine parametre olarak Student verdik.Cons calisti.
- @Query("Select new com.tpe.dto.StudentDTO(s) from Student s where s.id:id")
-    Optional<StudentDTO> findStudentDTOById(Long id);
+    //maplemek için eşit field olması lazım.DTO ya istedigimiz fieldalari alirsak buradaki mapleme olmaz
+    //servicede yaptigimizda istege gore setleyebilirz
+ @Query("Select new com.tpe.dto.StudentDTO(s) from Student s where s.id=:id")
+    Optional<StudentDTO> findStudentDTOById(@Param("id") Long id);
 
 
 

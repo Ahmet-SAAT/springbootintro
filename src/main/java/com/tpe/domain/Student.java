@@ -8,6 +8,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter//getterlar yapildi
 //class seviyesinden ziyade variabler uzerine getter setter yazabiliriz ama uzun surer.Hepine yapmak lazim
@@ -47,6 +49,8 @@ public class Student {
     @Setter(AccessLevel.NONE)//setteri olmasin dedik
     private LocalDateTime createDate=LocalDateTime.now();
 
+    @OneToMany(mappedBy = "student")//student fieldi hangi classdaysa iliski orada baslasin.Joincolumn orada olsun
+    private List<Book> book=new ArrayList<>();
 
    /* public Student() {
     }
