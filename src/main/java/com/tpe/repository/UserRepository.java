@@ -10,5 +10,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     Optional<User> findByUserName(String userName) throws ResourceNotFoundException;
     //userssrvice gibi bir clasim olmadigi icin exceptionu burada handel ettim
-    //springsecurity kndisi userdetailservice olusturur
+    //userdeatilsevice kendisi gelecek
 }
